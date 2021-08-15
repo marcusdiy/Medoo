@@ -1088,14 +1088,17 @@ class Medoo
 
                     foreach ($order as $column => $value) {
                         if (is_array($value)) {
-                            $valueStack = [];
+                            $valueStack = []; 
+                            $dir = '';
+                            if (strpos($column, ' ') > 0) list($column, $dir) = explode(' ', $column);
 
                             foreach ($value as $item) {
                                 $valueStack[] = is_int($item) ? $item : $this->quote($item);
                             }
 
                             $valueString = implode(',', $valueStack);
-                            $stack[] = "FIELD({$this->columnQuote($column)}, {$valueString})";
+                            $stack[] = "FIELD({$this->columnQuote($column)}, {$valueString}) $dir";
+                            
                         } elseif ($value === 'ASC' || $value === 'DESC') {
                             $stack[] = $this->columnQuote($column) . ' ' . $value;
                         } elseif (is_int($column)) {
